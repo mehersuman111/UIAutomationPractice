@@ -2,7 +2,10 @@ package base;
 
 import core.logging.LoggerManager;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
+import org.openqa.selenium.interactions.WheelInput;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -40,6 +43,7 @@ public class WebActions extends BasePage {
     String pageTitle;
     WebElement firstSelectedOption;
     List<WebElement> dropdownOptions;
+    boolean isMouseHeld;
 
     Select select;
 
@@ -499,10 +503,135 @@ public class WebActions extends BasePage {
         if (dropdownOptions == null) {
             logger.logMessage("warn", "Dropdown options not fetched yet, please call getAllDropdownOptions() first.");
             return null;
-        } else if(dropdownOptions.isEmpty()){
+        } else if (dropdownOptions.isEmpty()) {
             logger.logMessage("warn", "Dropdown has no options available.");
             return dropdownOptions;
         }
         return dropdownOptions;
+    }
+
+    public WebActions mouseLeftClick(WebElement element, String elementName, ElementType elementType) {
+        try {
+            actions.moveToElement(element).click().perform();
+            logger.logMessage("info", "Performed left clicked on the %s %s using mouse.".formatted(elementName, elementType.getValue()));
+        } catch (MoveTargetOutOfBoundsException mtoobe) {
+            logger.logMessage("error", "The target element is not on the view port now.");
+        }
+        return this;
+    }
+
+    public WebActions mouseDoubleClick(WebElement element, String elementName, ElementType elementType) {
+        actions.moveToElement(element).doubleClick().perform();
+        logger.logMessage("info", "Performed double click on the %s %s using mouse.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+
+    public WebActions mouseRightClick(WebElement element, String elementName, ElementType elementType) {
+        actions.moveToElement(element).contextClick().perform();
+        logger.logMessage("info", "Performed right click on the %s %s using mouse.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+
+    public WebActions mouseClickAndHold(WebElement element, String elementName, ElementType elementType) {
+        actions.moveToElement(element).clickAndHold().perform();
+        isMouseHeld = true;
+        logger.logMessage("info", "Performed click and hold on the %s %s using mouse.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+
+    public WebActions mouseHeldRelease(WebElement element, String elementName, ElementType elementType) {
+        if (isMouseHeld) {
+            actions.moveToElement(element).release().perform();
+            isMouseHeld = false;
+            logger.logMessage("info", "Performed release from the %s %s that has been held using mouse.".formatted(elementName, elementType.getValue()));
+        } else {
+            logger.logMessage("warn", "Mouse held release is not possible as nothing is held by mouse at this moment.");
+        }
+        return this;
+    }
+
+    public WebActions mouseMoveToElement(WebElement element, String elementName, ElementType elementType) {
+        actions.moveToElement(element).perform();
+        logger.logMessage("info", "Moved the mouse over %s %s.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+
+    public WebActions mouseMoveToElementWithOffset(WebElement element, String elementName, ElementType elementType, int xOffset, int yOffset) {
+        actions.moveToElement(element, xOffset, yOffset).perform();
+        logger.logMessage("info", "Moved the mouse to %s %s by '%d' x-offset and '%d' y-offset."
+                .formatted(elementName, elementType.getValue(), xOffset, yOffset));
+        return this;
+    }
+
+    public WebActions mouseMoveByOffset(int xOffset, int yOffset) {
+        actions.moveByOffset(xOffset, yOffset).perform();
+        logger.logMessage("info", "Moved the mouse by " + xOffset + " & " + yOffset + " offset from the current position.");
+        return this;
+    }
+
+    public WebActions dragAndDrop(WebElement draggableElement, String draggableElementName, ElementType draggableElementType,
+                                  WebElement targetDropElement, String targetDropElementName, ElementType targetDropElementType) {
+        actions.dragAndDrop(draggableElement, targetDropElement).perform();
+        logger.logMessage("info", "Drag the %s %s and drop it to the %s %s".formatted(draggableElementName, draggableElementType.getValue(),
+                targetDropElementName, targetDropElementType.getValue()));
+        return this;
+    }
+
+    public WebActions dragAndDropByOffset(WebElement draggableElement, String draggableElementName, ElementType draggableElementType,
+                                          int xOffset, int yOffset) {
+        actions.dragAndDropBy(draggableElement, xOffset, yOffset).perform();
+        logger.logMessage("info", "Drag and drop the %s %s by %d & %d from x Offset and y Offset.".formatted(draggableElementName, draggableElementType.getValue(), xOffset, yOffset));
+        return this;
+    }
+
+    public WebActions scrollToElement(WebElement element, String elementName, ElementType elementType) {
+        actions.scrollToElement(element).perform();
+        logger.logMessage("info", "Scrolled the page until we reach to the element %s %s in in view.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+
+    public WebActions scrollByAmount(int xOffset, int yOffset) {
+        actions.scrollByAmount(xOffset, yOffset).perform();
+        logger.logMessage("info", "Scrolled the page by %d & %d pixel from x offset and y offset respectively.".formatted(xOffset, yOffset));
+        return this;
+    }
+
+    public WebActions scrollFromOrigin(WebElement element, String elementName, ElementType elementType, int xOffset, int yOffset) {
+        WheelInput.ScrollOrigin scrollOrigin = WheelInput.ScrollOrigin.fromElement(element);
+        actions.scrollFromOrigin(scrollOrigin, xOffset, yOffset).perform();
+        logger.logMessage("info", "Scrolled the page from %s %s by %d & %d pixel from x offset and y offset respectively.".formatted(elementName, elementType.getValue(), xOffset, yOffset));
+        return this;
+    }
+
+    public WebActions performKeyBoardActions(Keys[] keys, String targetKey) {
+        for (Keys key : keys) {
+            actions.keyDown(key);
+        }
+        actions.sendKeys(targetKey);
+        for (int i = keys.length - 1; i >= 0; i--) {
+            actions.keyUp(keys[i]);
+        }
+        actions.perform();
+        logger.logMessage("info", "Performed the required keyboard action successfully.");
+        return this;
+    }
+
+    public WebActions performKeyBoardActionsOnWebElement(WebElement element, String elementName, ElementType elementType, Keys[] keys, String targetKey) {
+        actions.moveToElement(element).click();
+        for (Keys key : keys) {
+            actions.keyDown(key);
+        }
+        actions.sendKeys(targetKey);
+        for (int i = keys.length - 1; i >= 0; i--) {
+            actions.keyUp(keys[i]);
+        }
+        actions.perform();
+        logger.logMessage("info", "Performed the required keyboard action successfully on %s %s.".formatted(elementName, elementType.getValue()));
+        return this;
+    }
+    public WebActions sendKeys(WebElement element, String elementName, ElementType elementType, String text) {
+        element.sendKeys(text);
+        logger.logMessage("info", "Provided text value '%s' in the %s %s.".formatted(text,elementName,elementType.getValue()));
+        return this;
     }
 }
