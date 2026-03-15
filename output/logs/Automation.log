@@ -1,0 +1,7 @@
+2026-03-15 18:02:34.225 [main] INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Suman\Mine\Practice\AutomationPractice\testng.xml
+
+2026-03-15 18:02:41.799 [main] INFO  pages.entry.LandingPage - Clicked on the Signin button
+2026-03-15 18:02:42.243 [main] INFO  pages.entry.AuthenticationPage - Provided text value 'figina7483@bigonla.com' in the Email address text field.
+2026-03-15 18:02:42.448 [main] INFO  pages.entry.AuthenticationPage - Provided text value 'Suman@123' in the Password text field.
+2026-03-15 18:02:42.942 [main] INFO  pages.entry.AuthenticationPage - Clicked on the Signin button

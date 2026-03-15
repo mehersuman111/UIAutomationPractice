@@ -2,6 +2,8 @@ package pages.entry;
 
 import base.BasePage;
 import base.WebActions;
+import types.ElementType;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -35,6 +37,11 @@ public class LandingPage extends WebActions {
         contactUs.click();
     }
     public AuthenticationPage clickOnSignInButton(){
+    	clickOn(signIn, "Signin", ElementType.BUTTON);
+        return new AuthenticationPage(driver);
+    }
+    public AuthenticationPage chechLogoutButtonAppeared(){
+    	;
         return new AuthenticationPage(driver);
     }
 }
