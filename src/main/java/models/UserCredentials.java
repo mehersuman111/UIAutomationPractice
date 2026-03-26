@@ -1,6 +1,7 @@
-package data.models;
-
+package models;
 import java.util.List;
+
+import models.Credential;
 
 public class UserCredentials {
 	private List<Credential> credentials;

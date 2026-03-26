@@ -40,8 +40,4 @@ public class LandingPage extends WebActions {
     	clickOn(signIn, "Signin", ElementType.BUTTON);
         return new AuthenticationPage(driver);
     }
-    public AuthenticationPage chechLogoutButtonAppeared(){
-    	;
-        return new AuthenticationPage(driver);
-    }
 }

@@ -42,6 +42,8 @@ public class AuthenticationPage extends WebActions {
     private WebElement emailField;
     @FindBy(id="passwd")
     private WebElement passwordField;
+    @FindBy(xpath = "//li[text()='Authentication failed.']/../..")
+    private WebElement loginAlert;
 
     public AuthenticationPage(WebDriver driver){
         super(driver);
@@ -62,5 +64,8 @@ public class AuthenticationPage extends WebActions {
     public PasswordResetPage clickForgotPassword(){
         return new PasswordResetPage(driver);
     }
-
+    public AuthenticationPage checkLoginAlert(boolean expectedStatus) {
+        isDisplayed(loginAlert, "Login Alert", ElementType.ALERT,expectedStatus);
+        return this;
+    }
 }

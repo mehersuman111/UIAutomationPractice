@@ -9,14 +9,6 @@ import org.testng.asserts.SoftAssert;
 import core.logging.LoggerManager;
 
 public class BaseTest {
-
-    /*static {
-        System.out.println("=== LOG4J2 DEBUG ===");
-        System.out.println("Config path: " + System.getProperty("log4j2.configurationFile"));
-        System.out.println("File exists: " + new java.io.File(
-            System.getProperty("log4j2.configurationFile")).exists());
-        System.out.println("===================");
-    }*/
 	
 	SoftAssert softAssert = new SoftAssert();
 	private LoggerManager logger = new LoggerManager(this.getClass());

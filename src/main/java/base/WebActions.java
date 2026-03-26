@@ -21,14 +21,6 @@ import java.util.logging.Logger;
 
 public class WebActions extends BasePage {
 
-	// ─────────────────────────────────────────────────────────────────────────
-// TODO: Page Load Strategy
-//       Implement the ability to configure PageLoadStrategy (NORMAL, EAGER, NONE)
-//       via ChromeOptions before the driver is initialized.
-//       This will be handled at the Driver/Configuration setup level,
-//       not inside WebActions.
-// ─────────────────────────────────────────────────────────────────────────
-
 	// Composition ('Has - A' Relationship)
 	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 	LoggerManager logger = new LoggerManager(this.getClass());
@@ -731,6 +723,21 @@ public class WebActions extends BasePage {
 		javascriptExecutor.executeScript("arguments[0].value=arguments[1];", element, value);
 		logger.logMessage("info",
 				"Set value '%s' on %s %s using JS.".formatted(value, elementName, elementType.getValue()));
+		return this;
+	}
+
+	public WebActions isDisplayed(WebElement element, String elementName, ElementType elementType,
+			boolean expectedStatus) {
+		try {
+			boolean actualStatus = element.isDisplayed();
+			softAssert.assertEquals(actualStatus, expectedStatus);
+			logger.logMessage("info",
+					"%s %s is available on the screen.".formatted(elementName, elementType.getValue()));
+		} catch (NoSuchElementException | StaleElementReferenceException e) {
+			logger.logMessage("error",
+					"There is no such web element present for %s %s.".formatted(elementName, elementType.getValue())
+							+ e.getMessage());
+		}
 		return this;
 	}
 }
